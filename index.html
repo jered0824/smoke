@@ -59,6 +59,33 @@
             display: none;
             color: #e53e3e;
         }
+
+        /* Alert modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .dark .modal-content {
+            background-color: #333;
+            color: #e2e2e2;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -76,10 +103,22 @@
         });
     </script>
 
+    <!-- 年龄确认模态框 -->
+    <div id="ageConfirmModal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">年龄确认</h2>
+            <p class="mb-4 text-gray-700 dark:text-gray-300">您输入的开始吸烟年龄小于12岁，请确认这是否正确？</p>
+            <div class="flex justify-end gap-2">
+                <button id="ageConfirmCancel" class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600">修改</button>
+                <button id="ageConfirmOk" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-90">确认</button>
+            </div>
+        </div>
+    </div>
+
     <div class="container mx-auto px-4 py-8 max-w-3xl">
         <header class="mb-8 text-center">
             <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">吸烟行为问卷</h1>
-            <p class="text-lg text-gray-700 dark:text-gray-300"></p>
+            <p class="text-lg text-gray-700 dark:text-gray-300">National Data Biobank</p>
         </header>
 
         <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 mb-6">
@@ -152,6 +191,7 @@
                     <div class="mb-6">
                         <label for="regular_age_started" class="block text-gray-700 dark:text-gray-300 mb-2">3. 您是多大年龄开始吸烟的？</label>
                         <input type="number" id="regular_age_started" name="regular_age_started" min="1" max="120" class="w-full px-4 py-2 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-primary focus:border-primary">
+                        <p id="regular-age-warning" class="error-message mt-1">请确认您输入的年龄是否正确。</p>
                     </div>
 
                     <div class="mb-6">
@@ -217,6 +257,7 @@
                     <div class="mb-6">
                         <label for="occasional_age_started" class="block text-gray-700 dark:text-gray-300 mb-2">8. 您是多大年龄开始吸烟的？</label>
                         <input type="number" id="occasional_age_started" name="occasional_age_started" min="1" max="120" class="w-full px-4 py-2 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-primary focus:border-primary">
+                        <p id="occasional-age-warning" class="error-message mt-1">请确认您输入的年龄是否正确。</p>
                     </div>
 
                     <div class="mb-6">
@@ -241,6 +282,41 @@
                         </div>
                     </div>
 
+                    <div class="mb-6">
+                        <p class="mb-2 text-gray-700 dark:text-gray-300">10. 您过去的吸烟状态是？</p>
+                        <div class="flex flex-col space-y-2">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="occasional_past_status" value="regular" class="form-radio h-5 w-5 text-primary">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300">经常吸烟</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="occasional_past_status" value="occasional" class="form-radio h-5 w-5 text-primary">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300">偶尔吸烟</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="occasional_past_status" value="tried_few_times" class="form-radio h-5 w-5 text-primary">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300">只尝试过几次</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="occasional_past_status" value="never" class="form-radio h-5 w-5 text-primary">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300">从未吸过</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="occasional_cigarettes_container" class="mb-6" style="display: none;">
+                        <p class="mb-2 text-gray-700 dark:text-gray-300">11. 您过去平均每天吸多少支香烟？</p>
+                        <select name="occasional_cigarettes_per_day" class="w-full px-4 py-2 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-primary focus:border-primary">
+                            <option value="">请选择</option>
+                            <option value="less_than_1">少于1支</option>
+                            <option value="1-5">1-5支</option>
+                            <option value="6-10">6-10支</option>
+                            <option value="11-20">11-20支</option>
+                            <option value="21-40">21-40支</option>
+                            <option value="40+">40支以上</option>
+                        </select>
+                    </div>
+
                     <div class="flex justify-between mt-6">
                         <button type="button" class="section-prev bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-6 py-2 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50">上一步</button>
                         <button type="button" class="section-next bg-primary text-white px-6 py-2 rounded-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">下一步</button>
@@ -252,30 +328,37 @@
                     <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">第四部分：过去吸烟者</h2>
                     
                     <div class="mb-6">
-                        <label for="former_age_started" class="block text-gray-700 dark:text-gray-300 mb-2">10. 您是多大年龄开始吸烟的？</label>
+                        <label for="former_age_started" class="block text-gray-700 dark:text-gray-300 mb-2">12. 您是多大年龄开始吸烟的？</label>
                         <input type="number" id="former_age_started" name="former_age_started" min="1" max="120" class="w-full px-4 py-2 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-primary focus:border-primary">
+                        <p id="former-age-warning" class="error-message mt-1">请确认您输入的年龄是否正确。</p>
                     </div>
 
                     <div class="mb-6">
-                        <label for="former_age_stopped" class="block text-gray-700 dark:text-gray-300 mb-2">11. 您是多大年龄停止吸烟的？</label>
+                        <label for="former_age_stopped" class="block text-gray-700 dark:text-gray-300 mb-2">13. 您是多大年龄停止吸烟的？</label>
                         <input type="number" id="former_age_stopped" name="former_age_stopped" min="1" max="120" class="w-full px-4 py-2 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-primary focus:border-primary">
                         <p id="age-error" class="error-message mt-1">停止吸烟年龄必须大于或等于开始吸烟年龄。</p>
                     </div>
 
                     <div class="mb-6">
-                        <p class="mb-2 text-gray-700 dark:text-gray-300">12. 您停止吸烟有多久了？</p>
-                        <select name="former_quit_duration" class="w-full px-4 py-2 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-primary focus:border-primary">
-                            <option value="">请选择</option>
-                            <option value="less_than_6m">少于6个月</option>
-                            <option value="6m_to_1y">6个月-1年</option>
-                            <option value="1y_to_5y">1-5年</option>
-                            <option value="5y_to_10y">5-10年</option>
-                            <option value="more_than_10y">10年以上</option>
-                        </select>
+                        <p class="mb-2 text-gray-700 dark:text-gray-300">14. 您过去的吸烟状态是？</p>
+                        <div class="flex flex-col space-y-2">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="former_smoking_status" value="regular" class="form-radio h-5 w-5 text-primary">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300">经常吸烟</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="former_smoking_status" value="occasional" class="form-radio h-5 w-5 text-primary">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300">偶尔吸烟</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="former_smoking_status" value="tried_few_times" class="form-radio h-5 w-5 text-primary">
+                                <span class="ml-2 text-gray-700 dark:text-gray-300">只尝试过几次</span>
+                            </label>
+                        </div>
                     </div>
 
-                    <div class="mb-6">
-                        <p class="mb-2 text-gray-700 dark:text-gray-300">13. 您过去平均每周吸烟的频率是？</p>
+                    <div id="former_frequency_container" class="mb-6" style="display: none;">
+                        <p class="mb-2 text-gray-700 dark:text-gray-300">15. 您过去平均每周吸烟的频率是？</p>
                         <div class="flex flex-col space-y-2">
                             <label class="inline-flex items-center">
                                 <input type="radio" name="former_frequency" value="6-7days" class="form-radio h-5 w-5 text-primary">
@@ -292,8 +375,8 @@
                         </div>
                     </div>
 
-                    <div class="mb-6">
-                        <p class="mb-2 text-gray-700 dark:text-gray-300">14. 您过去平均每天吸多少支香烟？</p>
+                    <div id="former_cigarettes_container" class="mb-6" style="display: none;">
+                        <p class="mb-2 text-gray-700 dark:text-gray-300">16. 您过去平均每天吸多少支香烟？</p>
                         <select name="former_cigarettes_per_day" class="w-full px-4 py-2 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-primary focus:border-primary">
                             <option value="">请选择</option>
                             <option value="less_than_1">少于1支</option>
@@ -306,7 +389,17 @@
                     </div>
 
                     <div class="mb-6">
-                        <p class="mb-2 text-gray-700 dark:text-gray-300">15. 您停止吸烟的主要原因是什么？（可多选）</p>
+                        <p class="mb-2 text-gray-700 dark:text-gray-300">17. 您停止吸烟有多久了？</p>
+                        <select name="former_quit_duration" class="w-full px-4 py-2 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-primary focus:border-primary">
+                            <option value="">请选择</option>
+                            <option value="less_than_6m">少于6个月</option>
+                            <option value="6m_to_1y">6个月-1年</option>
+                            <option value="more_than_1y">1年以上</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-6">
+                        <p class="mb-2 text-gray-700 dark:text-gray-300">18. 您停止吸烟的主要原因是什么？（可多选）</p>
                         <div class="flex flex-col space-y-2">
                             <label class="inline-flex items-center">
                                 <input type="checkbox" name="former_quit_reasons[]" value="health" class="form-checkbox h-5 w-5 text-primary">
@@ -343,7 +436,7 @@
                     <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">第五部分：二手烟暴露</h2>
                     
                     <div class="mb-6">
-                        <p class="mb-2 text-gray-700 dark:text-gray-300">16. 您家里是否有人吸烟（不包括您自己）？</p>
+                        <p class="mb-2 text-gray-700 dark:text-gray-300">19. 您家里是否有人吸烟（不包括您自己）？</p>
                         <div class="flex flex-col space-y-2">
                             <label class="inline-flex items-center">
                                 <input type="radio" name="household_smoke" value="yes" class="form-radio h-5 w-5 text-primary">
@@ -357,12 +450,12 @@
                     </div>
 
                     <div id="household_smokers_container" class="mb-6" style="display: none;">
-                        <label for="household_smokers" class="block text-gray-700 dark:text-gray-300 mb-2">17. 吸烟人数：</label>
+                        <label for="household_smokers" class="block text-gray-700 dark:text-gray-300 mb-2">20. 吸烟人数：</label>
                         <input type="number" id="household_smokers" name="household_smokers" min="1" class="w-full px-4 py-2 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-primary focus:border-primary">
                     </div>
 
                     <div class="mb-6">
-                        <p class="mb-2 text-gray-700 dark:text-gray-300">18. 您在工作场所或其他日常环境中是否经常接触二手烟？</p>
+                        <p class="mb-2 text-gray-700 dark:text-gray-300">21. 您在工作场所或其他日常环境中是否经常接触二手烟？</p>
                         <div class="flex flex-col space-y-2">
                             <label class="inline-flex items-center">
                                 <input type="radio" name="secondhand_exposure" value="daily" class="form-radio h-5 w-5 text-primary">
@@ -412,9 +505,16 @@
             const submissionMessage = document.getElementById('submission-message');
             const resultsContainer = document.getElementById('results-container');
             const resultsDisplay = document.getElementById('results-display');
+            const ageConfirmModal = document.getElementById('ageConfirmModal');
+            const ageConfirmOk = document.getElementById('ageConfirmOk');
+            const ageConfirmCancel = document.getElementById('ageConfirmCancel');
+            
             let currentSection = 0;
             let totalSections = sections.length;
             let userSmokingStatus = null;
+            let waitingForAgeConfirmation = false;
+            let pendingNextButton = null;
+            let confirmedLowAge = false; // 新增：记录用户是否已经确认过低年龄
 
             // 第一部分：吸烟状态筛选 - 设置问题显示逻辑
             const smokingStatusRadios = document.querySelectorAll('input[name="smoking_status"]');
@@ -448,7 +548,49 @@
                 });
             });
 
-            // 第二部分：当前经常吸烟者 - 戒烟尝试问题逻辑
+            // 年龄验证函数 - 适用于所有年龄输入字段
+            function checkAge(ageInput, warningElement) {
+                const age = parseInt(ageInput.value);
+                if (age && age < 12 && !confirmedLowAge) { // 只有当用户没有确认过低年龄时才显示警告
+                    warningElement.style.display = 'block';
+                    return false;
+                } else {
+                    warningElement.style.display = 'none';
+                    return true;
+                }
+            }
+
+            // 年龄模态框确认处理
+            function showAgeConfirmModal(nextButton) {
+                ageConfirmModal.style.display = 'block';
+                waitingForAgeConfirmation = true;
+                pendingNextButton = nextButton;
+            }
+
+            ageConfirmOk.addEventListener('click', function() {
+                ageConfirmModal.style.display = 'none';
+                waitingForAgeConfirmation = false;
+                confirmedLowAge = true; // 用户确认了低年龄
+                if (pendingNextButton) {
+                    pendingNextButton.click();
+                    pendingNextButton = null;
+                }
+            });
+
+            ageConfirmCancel.addEventListener('click', function() {
+                ageConfirmModal.style.display = 'none';
+                waitingForAgeConfirmation = false;
+                pendingNextButton = null;
+            });
+
+            // 第二部分：当前经常吸烟者 - 年龄和戒烟尝试逻辑
+            const regularAgeStarted = document.getElementById('regular_age_started');
+            const regularAgeWarning = document.getElementById('regular-age-warning');
+
+            regularAgeStarted.addEventListener('change', function() {
+                checkAge(this, regularAgeWarning);
+            });
+
             const regularQuitAttemptsRadios = document.querySelectorAll('input[name="regular_quit_attempts"]');
             const regularQuitCountContainer = document.getElementById('regular_quit_count_container');
 
@@ -462,10 +604,41 @@
                 });
             });
 
-            // 第四部分：过去吸烟者 - 停止年龄验证
+            // 第三部分：偶尔吸烟者 - 年龄和过去状态逻辑
+            const occasionalAgeStarted = document.getElementById('occasional_age_started');
+            const occasionalAgeWarning = document.getElementById('occasional-age-warning');
+            const occasionalPastStatusRadios = document.querySelectorAll('input[name="occasional_past_status"]');
+            const occasionalCigarettesContainer = document.getElementById('occasional_cigarettes_container');
+
+            occasionalAgeStarted.addEventListener('change', function() {
+                checkAge(this, occasionalAgeWarning);
+            });
+
+            occasionalPastStatusRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'regular') {
+                        occasionalCigarettesContainer.style.display = 'block';
+                    } else {
+                        occasionalCigarettesContainer.style.display = 'none';
+                    }
+                });
+            });
+
+            // 第四部分：过去吸烟者 - 年龄、停止年龄验证和过去状态
             const formerAgeStarted = document.getElementById('former_age_started');
             const formerAgeStopped = document.getElementById('former_age_stopped');
+            const formerAgeWarning = document.getElementById('former-age-warning');
             const ageError = document.getElementById('age-error');
+            const formerSmokingStatusRadios = document.querySelectorAll('input[name="former_smoking_status"]');
+            const formerFrequencyContainer = document.getElementById('former_frequency_container');
+            const formerCigarettesContainer = document.getElementById('former_cigarettes_container');
+
+            formerAgeStarted.addEventListener('change', function() {
+                checkAge(this, formerAgeWarning);
+                validateAges();
+            });
+
+            formerAgeStopped.addEventListener('change', validateAges);
 
             function validateAges() {
                 if (formerAgeStarted.value && formerAgeStopped.value) {
@@ -480,10 +653,19 @@
                 return true; // 如果两个输入都没有值，则通过验证
             }
 
-            formerAgeStarted.addEventListener('change', validateAges);
-            formerAgeStopped.addEventListener('change', validateAges);
+            formerSmokingStatusRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'regular') {
+                        formerFrequencyContainer.style.display = 'block';
+                        formerCigarettesContainer.style.display = 'block';
+                    } else {
+                        formerFrequencyContainer.style.display = 'none';
+                        formerCigarettesContainer.style.display = 'none';
+                    }
+                });
+            });
 
-            // 第四部分：过去吸烟者 - 其他戒烟原因
+            // 第四部分：其他戒烟原因
             const formerQuitReasonCheckboxes = document.querySelectorAll('input[name="former_quit_reasons[]"]');
             const formerQuitReasonOther = document.getElementById('former_quit_reason_other');
 
@@ -518,7 +700,25 @@
 
             document.querySelectorAll('.section-next').forEach(button => {
                 button.addEventListener('click', function() {
-                    if (currentSection === 3) { // 在第四部分（过去吸烟者）
+                    // 年龄验证
+                    if (currentSection === 1) { // 当前经常吸烟者
+                        const age = parseInt(regularAgeStarted.value);
+                        if (age && age < 12 && !confirmedLowAge) { // 只有当用户没有确认过低年龄时才显示警告
+                            showAgeConfirmModal(this);
+                            return;
+                        }
+                    } else if (currentSection === 2) { // 当前偶尔吸烟者
+                        const age = parseInt(occasionalAgeStarted.value);
+                        if (age && age < 12 && !confirmedLowAge) {
+                            showAgeConfirmModal(this);
+                            return;
+                        }
+                    } else if (currentSection === 3) { // 过去吸烟者
+                        const age = parseInt(formerAgeStarted.value);
+                        if (age && age < 12 && !confirmedLowAge) {
+                            showAgeConfirmModal(this);
+                            return;
+                        }
                         if (!validateAges()) {
                             return; // 如果年龄验证失败，不进行导航
                         }
